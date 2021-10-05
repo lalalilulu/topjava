@@ -2,6 +2,7 @@ package ru.javawebinar.topjava.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class UserMeal {
     private final LocalDateTime dateTime;
@@ -22,6 +23,10 @@ public class UserMeal {
 
     public LocalDate getLocalDate() {
         return dateTime.toLocalDate();
+    }
+
+    public LocalTime getLocalTime() {
+        return dateTime.toLocalTime();
     }
 
     public String getDescription() {
