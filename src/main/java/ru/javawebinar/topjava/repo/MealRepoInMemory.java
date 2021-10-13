@@ -8,12 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
-public class MealRepoImpl implements MealRepo {
-    private final Map<Integer, Meal> mealsMap = new ConcurrentHashMap<>(MealsUtil.meals.stream().collect(Collectors.toMap(Meal::getId, Function.identity())));
-    private final AtomicInteger counter = new AtomicInteger(MealsUtil.meals.size());
+public class MealRepoInMemory implements MealRepo {
+    private final Map<Integer, Meal> mealsMap = new ConcurrentHashMap<>();
+    private final AtomicInteger counter = new AtomicInteger(0);
+
+    {
+        MealsUtil.meals.forEach(this::create);
+    }
 
     @Override
     public Meal get(int id) {
@@ -26,7 +28,7 @@ public class MealRepoImpl implements MealRepo {
     }
 
     @Override
-    public Meal save(Meal meal) {
+    public Meal create(Meal meal) {
         meal.setId(counter.incrementAndGet());
         mealsMap.put(meal.getId(), meal);
         return meal;
