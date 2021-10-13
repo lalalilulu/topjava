@@ -8,7 +8,7 @@
 <h3><a href="index.html">Home</a></h3>
 <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
 <hr>
-<h2>${meal.id == null ? "Create meal" : "Edit meal"}</h2>
+<h2>${meal.id == null ? "Add meal" : "Edit meal"}</h2>
 <hr>
 <form method="post" action="meals">
     <input type="hidden" name="id" value="${meal.id}">
@@ -19,7 +19,7 @@
     Calories: <input type="number" name="calories" value="${meal.calories}">
     <hr>
     <button type="submit">Save</button>
-    <button onclick="event.preventDefault(); window.history.back()">Cancel</button>
+    <button type="button" onclick="window.history.back()">Cancel</button>
 </form>
 </body>
 </html>
