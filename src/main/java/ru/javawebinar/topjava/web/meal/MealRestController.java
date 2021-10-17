@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+import static ru.javawebinar.topjava.web.SecurityUtil.getAuthUserId;
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 
@@ -27,34 +28,34 @@ public class MealRestController {
 
     public List<MealTo> getAll() {
         log.info("getAll");
-        return MealsUtil.getTos(service.getAll(SecurityUtil.authUserId()), SecurityUtil.authUserCaloriesPerDay());
+        return MealsUtil.getTos(service.getAll(getAuthUserId()), SecurityUtil.authUserCaloriesPerDay());
     }
 
     public List<MealTo> getFilteredMealTos(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
         log.info("getFilteredMealTos with startDate: {}, endDate: {}, startTime: {}, endTime: {}", startDate, endDate, startTime, endTime);
-        return MealsUtil.filterByPredicate(service.getAll(SecurityUtil.authUserId()), SecurityUtil.authUserCaloriesPerDay(),
-                meal -> DateTimeUtil.isBetweenHalfOpen(meal.getDate(), startDate, endDate) && DateTimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime));
+        return MealsUtil.filterByPredicate(service.getAll(getAuthUserId()), SecurityUtil.authUserCaloriesPerDay(),
+                meal -> DateTimeUtil.isBetweenClose(meal.getDate(), startDate, endDate) && DateTimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime));
     }
 
     public Meal get(int id) {
         log.info("get {}", id);
-        return service.get(id, SecurityUtil.authUserId());
+        return service.get(id, getAuthUserId());
     }
 
     public Meal create(Meal meal) {
         log.info("create {}", meal);
         checkNew(meal);
-        return service.create(meal, SecurityUtil.authUserId());
+        return service.create(meal, getAuthUserId());
     }
 
     public void delete(int id) {
         log.info("delete {}", id);
-        service.delete(id, SecurityUtil.authUserId());
+        service.delete(id, getAuthUserId());
     }
 
     public void update(Meal meal, int id) {
         log.info("update {} with id={}", meal, id);
         assureIdConsistent(meal, id);
-        service.update(meal, SecurityUtil.authUserId());
+        service.update(meal, getAuthUserId());
     }
 }

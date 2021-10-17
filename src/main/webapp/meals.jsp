@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://topjava.javawebinar.ru/functions" %>
+<%@ page import="ru.javawebinar.topjava.web.SecurityUtil" %>
 <%--<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>--%>
 <html>
 <head>
@@ -20,8 +21,28 @@
 <section>
     <h3><a href="index.html">Home</a></h3>
     <hr/>
-    <h2>Meals</h2>
+    <h2>Meals for ${SecurityUtil.getAuthUserId() == 1 ? "User" : "Admin"}</h2>
     <a href="meals?action=create">Add Meal</a>
+    <br><br>
+    <form method="post" action="meals?action=filter">
+        <dl>
+            <dt>From Date (included):</dt>
+            <dd><input type="date" name="startDate" value="${startDate}"></dd>
+        </dl>
+        <dl>
+            <dt>To Date (included):</dt>
+            <dd><input type="date" name="endDate" value="${endDate}"></dd>
+        </dl>
+        <dl>
+            <dt>From Time (included):</dt>
+            <dd><input type="time" name="startTime" value="${startTime}"></dd>
+        </dl>
+        <dl>
+            <dt>To Time (excluded):</dt>
+            <dd><input type="time" name="endTime" value="${endTime}"></dd>
+        </dl>
+        <button type="submit">Filter the meals</button>
+    </form>
     <br><br>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
