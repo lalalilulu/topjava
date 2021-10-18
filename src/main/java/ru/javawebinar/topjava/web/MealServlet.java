@@ -12,11 +12,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
+
+import static ru.javawebinar.topjava.util.DateTimeUtil.createOptionalLd;
+import static ru.javawebinar.topjava.util.DateTimeUtil.createOptionalLt;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
@@ -38,34 +39,19 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
-        String action = request.getParameter("action");
-        if (action != null && action.equals("filter")) {
-            String startDateParam = request.getParameter("startDate");
-            String endDateParam = request.getParameter("endDate");
-            String startTimeParam = request.getParameter("startTime");
-            String endTimeParam = request.getParameter("endTime");
-            LocalDate startDate = startDateParam.isEmpty() ? LocalDate.MIN : LocalDate.parse(startDateParam);
-            LocalDate endDate = endDateParam.isEmpty() ? LocalDate.MAX : LocalDate.parse(endDateParam);
-            LocalTime startTime = startTimeParam.isEmpty() ? LocalTime.MIN : LocalTime.parse(startTimeParam);
-            LocalTime endTime = endTimeParam.isEmpty() ? LocalTime.MAX : LocalTime.parse(endTimeParam);
-            log.info("getFilteredMealTos");
-            request.setAttribute("meals", mealController.getFilteredMealTos(startDate, endDate, startTime, endTime));
-            request.getRequestDispatcher("/meals.jsp").forward(request, response);
+        String id = request.getParameter("id");
+        Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
+                LocalDateTime.parse(request.getParameter("dateTime")),
+                request.getParameter("description"),
+                Integer.parseInt(request.getParameter("calories")));
+        if (meal.isNew()) {
+            log.info("Create {}", meal);
+            mealController.create(meal);
         } else {
-            String id = request.getParameter("id");
-            Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
-                    LocalDateTime.parse(request.getParameter("dateTime")),
-                    request.getParameter("description"),
-                    Integer.parseInt(request.getParameter("calories")));
-            if (meal.isNew()) {
-                log.info("Create {}", meal);
-                mealController.create(meal);
-            } else {
-                log.info("Update {}", meal);
-                mealController.update(meal, meal.getId());
-            }
-            response.sendRedirect("meals");
+            log.info("Update {}", meal);
+            mealController.update(meal, meal.getId());
         }
+        response.sendRedirect("meals");
     }
 
     @Override
@@ -86,6 +72,16 @@ public class MealServlet extends HttpServlet {
                         mealController.get(getId(request));
                 request.setAttribute("meal", meal);
                 request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
+                break;
+            case "filter":
+                log.info("getFilteredMealTos");
+                String startDateParam = request.getParameter("startDate");
+                String endDateParam = request.getParameter("endDate");
+                String startTimeParam = request.getParameter("startTime");
+                String endTimeParam = request.getParameter("endTime");
+                request.setAttribute("meals", mealController.getFilteredMealTos(createOptionalLd(startDateParam),
+                        createOptionalLd(endDateParam), createOptionalLt(startTimeParam), createOptionalLt(endTimeParam)));
+                request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
             case "all":
             default:

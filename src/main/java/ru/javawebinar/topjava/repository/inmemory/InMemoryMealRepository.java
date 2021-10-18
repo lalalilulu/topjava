@@ -4,12 +4,17 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.util.UserConst;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -29,7 +34,7 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public Meal save(Meal meal, int userId) {
-        Map<Integer, Meal> userMeals = getUserMeals(userId);
+        Map<Integer, Meal> userMeals = repository.computeIfAbsent(userId, key -> new ConcurrentHashMap<>());
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
             userMeals.put(meal.getId(), meal);
@@ -42,27 +47,28 @@ public class InMemoryMealRepository implements MealRepository {
     @Override
     public boolean delete(int id, int userId) {
         Map<Integer, Meal> userMeals = repository.get(userId);
-        return userMeals.remove(id) != null;
+        return userMeals != null && userMeals.remove(id) != null;
     }
 
     @Override
     public Meal get(int id, int userId) {
         Map<Integer, Meal> userMeals = repository.get(userId);
-        return userMeals.get(id);
+        return userMeals != null ? userMeals.get(id) : null;
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        Map<Integer, Meal> userMeals = repository.get(userId);
-        return CollectionUtils.isEmpty(userMeals) ? new ArrayList<>() :
-                userMeals.values().stream()
-                        .sorted(Comparator.comparing(Meal::getDateTime).reversed())
-                        .collect(Collectors.toList());
+        return getAll(userId, LocalDate.MIN, LocalDate.MAX);
     }
 
-    private Map<Integer, Meal> getUserMeals(int userId) {
-        return repository.computeIfAbsent(userId, key -> new ConcurrentHashMap<>());
-        //return repository.computeIfAbsent(userId, ConcurrentHashMap::new);
+    @Override
+    public List<Meal> getAll(int userId, LocalDate startDate, LocalDate endDate) {
+        Map<Integer, Meal> userMeals = repository.get(userId);
+        return CollectionUtils.isEmpty(userMeals) ? Collections.emptyList() :
+                userMeals.values().stream()
+                        .filter(meal -> DateTimeUtil.isBetweenClose(meal.getDate(), startDate, endDate))
+                        .sorted(Comparator.comparing(Meal::getDateTime).reversed())
+                        .collect(Collectors.toList());
     }
 }
 

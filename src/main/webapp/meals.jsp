@@ -21,27 +21,28 @@
 <section>
     <h3><a href="index.html">Home</a></h3>
     <hr/>
-    <h2>Meals for ${SecurityUtil.getAuthUserId() == 1 ? "User" : "Admin"}</h2>
+    <h2>Meals for ${SecurityUtil.authUserId() == 1 ? "User" : "Admin"}</h2>
     <a href="meals?action=create">Add Meal</a>
     <br><br>
-    <form method="post" action="meals?action=filter">
+    <form action="meals?action=filter">
+        <input hidden type="text" name="action" value="filter">
         <dl>
             <dt>From Date (included):</dt>
-            <dd><input type="date" name="startDate" value="${startDate}"></dd>
+            <dd><input type="date" name="startDate" value="${param.startDate}"></dd>
         </dl>
         <dl>
             <dt>To Date (included):</dt>
-            <dd><input type="date" name="endDate" value="${endDate}"></dd>
+            <dd><input type="date" name="endDate" value="${param.endDate}"></dd>
         </dl>
         <dl>
             <dt>From Time (included):</dt>
-            <dd><input type="time" name="startTime" value="${startTime}"></dd>
+            <dd><input type="time" name="startTime" value="${param.startTime}"></dd>
         </dl>
         <dl>
             <dt>To Time (excluded):</dt>
-            <dd><input type="time" name="endTime" value="${endTime}"></dd>
+            <dd><input type="time" name="endTime" value="${param.endTime}"></dd>
         </dl>
-        <button type="submit">Filter the meals</button>
+        <button type="submit">Find the meals</button>
     </form>
     <br><br>
     <table border="1" cellpadding="8" cellspacing="0">
