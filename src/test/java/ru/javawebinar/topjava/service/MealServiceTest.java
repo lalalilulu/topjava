@@ -14,12 +14,14 @@ import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.List;
 
 import static org.junit.Assert.assertThrows;
+import static ru.javawebinar.topjava.MealTestData.assertMatch;
+import static ru.javawebinar.topjava.MealTestData.getNew;
+import static ru.javawebinar.topjava.MealTestData.getUpdated;
 import static ru.javawebinar.topjava.MealTestData.*;
+import static ru.javawebinar.topjava.UserTestData.*;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
@@ -44,19 +46,35 @@ public class MealServiceTest extends TestCase {
 
     @Test
     public void getNotFound() {
-        assertThrows(NotFoundException.class, () -> service.get(MEAL_ID, USER_NOT_FOUND_ID));
+        assertThrows(NotFoundException.class, () -> service.get(MEAL_ID, NOT_FOUND));
+    }
+
+    @Test
+    public void getAbsentMeal() {
+        assertThrows(NotFoundException.class, () -> service.get(MEAL_NOT_FOUND_ID, USER_ID));
+    }
+
+    @Test
+    public void getMealOfAnotherUser() {
+        assertThrows(NotFoundException.class, () -> service.get(MEAL_ID, ADMIN_ID));
     }
 
     @Test
     public void getAll() {
-        List<Meal> all = service.getAll(MealTestData.USER_ID);
+        List<Meal> all = service.getAll(USER_ID);
         assertMatch(all, meal7, meal6, meal5, meal4, meal3, meal2, meal);
     }
 
     @Test
     public void getBetweenInclusive() {
-        List<Meal> filteredMeals = service.getBetweenInclusive(LocalDate.of(2020, Month.JANUARY, 31), LocalDate.of(2020, Month.FEBRUARY, 1), USER_ID);
-        assertMatch(filteredMeals, meal7, meal6, meal5, meal4);
+        List<Meal> filteredMeals = service.getBetweenInclusive(JANUARY_30, JANUARY_30, USER_ID);
+        assertMatch(filteredMeals, meal3, meal2, meal);
+    }
+
+    @Test
+    public void getBetweenInclusiveWithoutDates() {
+        List<Meal> allMeals = service.getBetweenInclusive(null, null, USER_ID);
+        assertMatch(allMeals, meal7, meal6, meal5, meal4, meal3, meal2, meal);
     }
 
     @Test
@@ -85,7 +103,7 @@ public class MealServiceTest extends TestCase {
     @Test
     public void updatedNotFound() {
         Meal updated = getUpdated();
-        assertThrows(NotFoundException.class, () -> service.update(updated, USER_NOT_FOUND_ID));
+        assertThrows(NotFoundException.class, () -> service.update(updated, NOT_FOUND));
     }
 
     @Test
@@ -95,7 +113,17 @@ public class MealServiceTest extends TestCase {
     }
 
     @Test
-    public void deletedNotFound() {
-        assertThrows(NotFoundException.class, () -> service.delete(MEAL_ID, USER_NOT_FOUND_ID));
+    public void deleteNotFound() {
+        assertThrows(NotFoundException.class, () -> service.delete(MEAL_ID, NOT_FOUND));
+    }
+
+    @Test
+    public void deleteAbsentMeal() {
+        assertThrows(NotFoundException.class, () -> service.delete(MEAL_NOT_FOUND_ID, USER_ID));
+    }
+
+    @Test
+    public void deleteMealOfAnotherUser() {
+        assertThrows(NotFoundException.class, () -> service.delete(MEAL_ID, ADMIN_ID));
     }
 }
