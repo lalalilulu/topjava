@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 public class DateTimeUtil {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -19,8 +20,8 @@ public class DateTimeUtil {
         return localDate != null ? localDate.atStartOfDay() : MIN_DATE;
     }
 
-    public static LocalDateTime atEndOfDayOrMax(LocalDate localDate) {
-        return localDate != null ? localDate.atTime(23, 59) : MAX_DATE;
+    public static LocalDateTime atStartOfNextDayOrMax(LocalDate localDate) {
+        return localDate != null ? localDate.plus(1, ChronoUnit.DAYS).atStartOfDay() : MAX_DATE;
     }
 
     public static String toString(LocalDateTime ldt) {

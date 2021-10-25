@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.service;
 
-import junit.framework.TestCase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -25,11 +24,12 @@ import static ru.javawebinar.topjava.UserTestData.*;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
+        "classpath:spring/spring-app-repo.xml",
         "classpath:spring/spring-db.xml"
 })
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
-public class MealServiceTest extends TestCase {
+public class MealServiceTest {
 
     static {
         SLF4JBridgeHandler.install();
@@ -101,9 +101,15 @@ public class MealServiceTest extends TestCase {
     }
 
     @Test
-    public void updatedNotFound() {
+    public void updateNotFound() {
         Meal updated = getUpdated();
         assertThrows(NotFoundException.class, () -> service.update(updated, NOT_FOUND));
+    }
+
+    @Test
+    public void updateMealOfAnotherUser() {
+        Meal updated = getUpdated();
+        assertThrows(NotFoundException.class, () -> service.update(updated, ADMIN_ID));
     }
 
     @Test
