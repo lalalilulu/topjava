@@ -42,23 +42,28 @@ public class JpaUserRepository implements UserRepository {
     @Override
     public boolean delete(int id) {
 
-/*      User ref = em.getReference(User.class, id);
-        em.remove(ref);
-*/
-        Query query = em.createQuery("DELETE FROM User u WHERE u.id=:id");
-        return query.setParameter("id", id).executeUpdate() != 0;
+//      User ref = em.getReference(User.class, id);
+//      em.remove(ref);
+
+//      Query query = em.createQuery("DELETE FROM User u WHERE u.id=:id");
+//      return query.setParameter("id", id).executeUpdate() != 0;
+
+        return em.createNamedQuery(User.DELETE)
+                .setParameter(1, id)
+                .executeUpdate() != 0;
     }
 
     @Override
     public User getByEmail(String email) {
-        //em.createNamedQuery(User.BY_EMAIL, User.class).setParameter(1, email).getSingleResult();
-        return em.getReference(User.class, email);
+        return em.createNamedQuery(User.BY_EMAIL, User.class)
+                .setParameter(1, email)
+                .getSingleResult();
     }
 
 
     @Override
     public List<User> getAll() {
-        //em.createNamedQuery(User.ALL_SORTED, User.class).getResultList();
-        return null;
+        return em.createNamedQuery(User.ALL_SORTED, User.class)
+                .getResultList();
     }
 }
