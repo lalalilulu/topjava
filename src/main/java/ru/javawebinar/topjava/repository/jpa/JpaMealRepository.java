@@ -22,19 +22,17 @@ public class JpaMealRepository implements MealRepository {
     @Override
     @Transactional
     public Meal save(Meal meal, int userId) {
+        meal.setUser(em.getReference(User.class, userId));
         if (meal.isNew()) {
-            meal.setUser(em.getReference(User.class, userId));
             em.persist(meal);
-        } else if (em.createNamedQuery(Meal.UPDATE)
-                .setParameter("description", meal.getDescription())
-                .setParameter("calories", meal.getCalories())
-                .setParameter("dateTime", meal.getDateTime())
-                .setParameter("id", meal.getId())
-                .setParameter("userId", userId)
-                .executeUpdate() == 0) {
-            throw new NotFoundException("No meal found for userId=" + userId);
+            return meal;
+        } else {
+            Meal mealFromRepo = em.find(Meal.class, meal.getId());
+            if (mealFromRepo == null || mealFromRepo.getUser().getId() != userId) {
+                throw new NotFoundException("No meal found for userId=" + userId);
+            }
+            return em.merge(meal);
         }
-        return meal;
     }
 
     @Override
@@ -48,11 +46,11 @@ public class JpaMealRepository implements MealRepository {
 
     @Override
     public Meal get(int id, int userId) {
-        return em.createNamedQuery(Meal.GET, Meal.class)
-                .setParameter("id", id)
-                .setParameter("userId", userId)
-                .getResultList().stream()
-                .findFirst().orElseThrow(() -> new NotFoundException("No meal found for id=" + id));
+        Meal meal = em.find(Meal.class, id);
+        if (meal == null || meal.getUser().getId() != userId) {
+            throw new NotFoundException("No meal found for id=" + id);
+        }
+        return meal;
     }
 
     @Override
