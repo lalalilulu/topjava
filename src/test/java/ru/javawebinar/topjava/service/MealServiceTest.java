@@ -3,6 +3,8 @@ package ru.javawebinar.topjava.service;
 import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Stopwatch;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,12 +14,15 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.javawebinar.topjava.DurationCounterRule;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.Formatter;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -32,16 +37,33 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
     private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
+    private static final Map<String, Long> testDurationMap = new HashMap<>();
 
     @Autowired
     private MealService service;
 
     @Rule
-    public DurationCounterRule durationCounterRule = new DurationCounterRule();
+    public Stopwatch stopwatch = new Stopwatch() {
+        @Override
+        protected void finished(long nanos, Description description) {
+            testDurationMap.put(description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos));
+            log.info(String.format("Test %s took %dms", description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos)));
+        }
+    };
 
     @AfterClass
     public static void afterClass() {
-        DurationCounterRule.listDurationDescriptions.forEach(log::info);
+        log.info(createTestResultsTable());
+    }
+
+    private static String createTestResultsTable() {
+        Formatter fmt = new Formatter();
+        fmt.format("\n%-35s", new String(new char[38]).replace("\0", "-"));
+        fmt.format("\n|%1$-25s|%2$-10s|", "Test Name", "Duration");
+        fmt.format("\n%-35s", new String(new char[38]).replace("\0", "-"));
+        testDurationMap.forEach((k, v) -> fmt.format("\n|%1$-25s|%2$-10s|", k, v + "ms"));
+        fmt.format("\n%-35s", new String(new char[38]).replace("\0", "-"));
+        return fmt.toString();
     }
 
     @Test
