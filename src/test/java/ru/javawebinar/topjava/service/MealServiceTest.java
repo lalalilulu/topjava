@@ -20,7 +20,7 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Formatter;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -37,10 +37,10 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
     private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
-    private static final Map<String, Long> testDurationMap = new HashMap<>();
-
-    @Autowired
-    private MealService service;
+    private static final Map<String, Long> testDurationMap = new LinkedHashMap<>();
+    private static final String TABLE_BORDER_FORMAT = "\n%-40s";
+    private static final String TABLE_ROW_FORMAT = "\n|%1$-25s|%2$15s|";
+    private static final String TABLE_BORDER = new String(new char[43]).replace("\0", "-");
 
     @Rule
     public Stopwatch stopwatch = new Stopwatch() {
@@ -51,6 +51,9 @@ public class MealServiceTest {
         }
     };
 
+    @Autowired
+    private MealService service;
+
     @AfterClass
     public static void afterClass() {
         log.info(createTestResultsTable());
@@ -58,11 +61,11 @@ public class MealServiceTest {
 
     private static String createTestResultsTable() {
         Formatter fmt = new Formatter();
-        fmt.format("\n%-35s", new String(new char[38]).replace("\0", "-"));
-        fmt.format("\n|%1$-25s|%2$-10s|", "Test Name", "Duration");
-        fmt.format("\n%-35s", new String(new char[38]).replace("\0", "-"));
-        testDurationMap.forEach((k, v) -> fmt.format("\n|%1$-25s|%2$-10s|", k, v + "ms"));
-        fmt.format("\n%-35s", new String(new char[38]).replace("\0", "-"));
+        fmt.format(TABLE_BORDER_FORMAT, TABLE_BORDER);
+        fmt.format(TABLE_ROW_FORMAT, "Test Name", "Duration (ms)");
+        fmt.format(TABLE_BORDER_FORMAT, TABLE_BORDER);
+        testDurationMap.forEach((k, v) -> fmt.format(TABLE_ROW_FORMAT, k, v));
+        fmt.format(TABLE_BORDER_FORMAT, TABLE_BORDER);
         return fmt.toString();
     }
 
