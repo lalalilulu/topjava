@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.service;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -19,6 +20,11 @@ public abstract class MealServiceTest extends AbstractServiceTest {
 
     @Autowired
     private MealService service;
+
+    @BeforeClass
+    public static void beforeClass() {
+        results = new StringBuilder();
+    }
 
     @Test
     public void delete() {

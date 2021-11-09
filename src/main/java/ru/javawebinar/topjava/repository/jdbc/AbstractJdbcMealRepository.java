@@ -82,8 +82,5 @@ public abstract class AbstractJdbcMealRepository<T> implements MealRepository {
                 ROW_MAPPER, userId, getDateTime(startDateTime), getDateTime(endDateTime));
     }
 
-    protected T getDateTime(LocalDateTime localDateTime) {
-        final var dateTime = (T) localDateTime;
-        return dateTime;
-    }
+    protected abstract T getDateTime(LocalDateTime localDateTime);
 }
