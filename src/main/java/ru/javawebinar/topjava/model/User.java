@@ -55,7 +55,7 @@ public class User extends AbstractNamedEntity {
     private int caloriesPerDay = DEFAULT_CALORIES_PER_DAY;
 
     //https://www.baeldung.com/jpa-joincolumn-vs-mappedby
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     //https://www.baeldung.com/jpa-sort
     @OrderBy("dateTime DESC")
     private List<Meal> meals;
