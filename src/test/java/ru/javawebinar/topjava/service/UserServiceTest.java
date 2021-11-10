@@ -1,7 +1,6 @@
 package ru.javawebinar.topjava.service;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
@@ -23,11 +22,6 @@ public abstract class UserServiceTest extends AbstractServiceTest {
 
     @Autowired
     private CacheManager cacheManager;
-
-    @BeforeClass
-    public static void beforeClass() {
-        results = new StringBuilder();
-    }
 
     @Before
     public void setup() {

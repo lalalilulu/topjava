@@ -56,6 +56,8 @@ public class User extends AbstractNamedEntity {
 
     //https://www.baeldung.com/jpa-joincolumn-vs-mappedby
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    //https://www.baeldung.com/jpa-sort
+    @OrderBy("dateTime DESC")
     private List<Meal> meals;
 
     public User() {
