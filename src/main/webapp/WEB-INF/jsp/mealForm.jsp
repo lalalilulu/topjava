@@ -6,9 +6,9 @@
 <body>
 <jsp:include page="fragments/bodyHeader.jsp"/>
 <section>
-    <h2><spring:message code="${meal.isNew() ? 'meal.add' : 'meal.edit'}"/></h2>
     <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
-    <form method="post" action="">
+    <h2><spring:message code="${meal.isNew() ? 'meal.add' : 'meal.edit'}"/></h2>
+    <form method="post">
         <input type="hidden" name="id" value="${meal.id}">
         <dl>
             <dt><spring:message code="meal.dateTime"/>:</dt>
@@ -27,4 +27,5 @@
     </form>
 </section>
 </body>
+<jsp:include page="fragments/footer.jsp"/>
 </html>
