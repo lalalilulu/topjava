@@ -10,7 +10,7 @@ public class LocalDateFormatter implements Formatter<LocalDate> {
 
     @Override
     public LocalDate parse(String text, Locale locale) {
-        return LocalDate.parse(text, DateTimeFormatter.ISO_LOCAL_DATE);
+        return LocalDate.parse(text);
     }
 
     @Override

@@ -8,11 +8,14 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
+import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
+import ru.javawebinar.topjava.web.SecurityUtil;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -51,7 +54,7 @@ class MealRestControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MEALTO_MATCHER.contentJson(MealsUtil.getTos(meals, MealsUtil.DEFAULT_CALORIES_PER_DAY)));
+                .andExpect(MEAL_TO_MATCHER.contentJson(MealsUtil.getTos(meals, SecurityUtil.authUserCaloriesPerDay())));
     }
 
     @Test
@@ -81,16 +84,34 @@ class MealRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void getBetweenLdt() throws Exception {
+    void getBetween() throws Exception {
+        List<MealTo> allMealTos = MealsUtil.filterByPredicate(meals,
+                SecurityUtil.authUserCaloriesPerDay(), meal -> true);
+        LocalDateTime startDateTime = LocalDateTime.of(2020, 1, 31, 0, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(2020, 1, 31, 14, 0);
+        List<MealTo> expectedValue = allMealTos.stream().filter(m -> m.getDateTime().equals(startDateTime) ||
+                m.getDateTime().isAfter(startDateTime) && m.getDateTime().isBefore(endDateTime)).toList();
         perform(MockMvcRequestBuilders.get(REST_URL + "filter")
-                .param("startDate", "2020-01-30")
-                .param("startTime", "09:00:00")
-                .param("endDate", "2020-01-30")
-                .param("endTime", "21:00:00"))
+                .param("startDate", "2020-01-31")
+                .param("startTime", "00:00:00")
+                .param("endDate", "2020-01-31")
+                .param("endTime", "14:00:00"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MEALTO_MATCHER.contentJson(MealsUtil.getTos(List.of(meal3, meal2, meal1),
-                        MealsUtil.DEFAULT_CALORIES_PER_DAY)));
+                .andExpect(MEAL_TO_MATCHER.contentJson(expectedValue));
+    }
+
+    @Test
+    void getBetweenWithEmptyParams() throws Exception {
+        List<MealTo> expectedValue = MealsUtil.filterByPredicate(meals,
+                SecurityUtil.authUserCaloriesPerDay(), meal -> true);
+        perform(MockMvcRequestBuilders.get(REST_URL + "filter")
+                .param("startDate", "")
+                .param("endTime", ""))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MEAL_TO_MATCHER.contentJson(expectedValue));
     }
 }
