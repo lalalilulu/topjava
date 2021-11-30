@@ -12,9 +12,14 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static ru.javawebinar.topjava.MealTestData.adminMeal1;
+import static ru.javawebinar.topjava.MealTestData.adminMeal2;
 import static ru.javawebinar.topjava.UserTestData.*;
 
 class AdminRestControllerTest extends AbstractControllerTest {
@@ -86,11 +91,6 @@ class AdminRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getWithMeals() throws Exception {
-//        List<String> expectedValue = new ArrayList<>();
-//        List.of(adminMeal2, adminMeal1).forEach(meal -> {
-//            String str = JsonUtil.writeValue(meal);
-//            expectedValue.add(str);
-//        });
         perform(MockMvcRequestBuilders.get(REST_URL + ADMIN_ID + "/with-meals"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -99,6 +99,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .andExpect(jsonPath("$.meals").isArray())
                 .andExpect(jsonPath("$.meals").isNotEmpty())
                 .andExpect(jsonPath("$.meals.length()").value(2));
-                //.andExpect(jsonPath("$.meals").value(expectedValue));
+        assertEquals(userService.getWithMeals(ADMIN_ID).getMeals().stream().toList(),
+                List.of(adminMeal2, adminMeal1));
     }
 }

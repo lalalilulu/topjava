@@ -10,8 +10,12 @@ import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.*;
 
 class ProfileRestControllerTest extends AbstractControllerTest {
@@ -57,5 +61,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .andExpect(jsonPath("$.meals").isArray())
                 .andExpect(jsonPath("$.meals").isNotEmpty())
                 .andExpect(jsonPath("$.meals.length()").value(7));
+        assertEquals(userService.getWithMeals(USER_ID).getMeals().stream().toList(),
+                List.of(meal7, meal6, meal5, meal4, meal3, meal2, meal1));
     }
 }
