@@ -14,13 +14,12 @@ import ru.javawebinar.topjava.web.json.JsonUtil;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javawebinar.topjava.UserTestData.*;
 
 class AdminRestControllerTest extends AbstractControllerTest {
 
-    private static final String REST_URL = AdminRestController.REST_URL + '/';
+    protected static final String REST_URL = AdminRestController.REST_URL + '/';
 
     @Autowired
     private UserService userService;
@@ -83,5 +82,23 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(USER_MATCHER.contentJson(admin, user));
+    }
+
+    @Test
+    void getWithMeals() throws Exception {
+//        List<String> expectedValue = new ArrayList<>();
+//        List.of(adminMeal2, adminMeal1).forEach(meal -> {
+//            String str = JsonUtil.writeValue(meal);
+//            expectedValue.add(str);
+//        });
+        perform(MockMvcRequestBuilders.get(REST_URL + ADMIN_ID + "/with-meals"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(USER_MATCHER.contentJson(admin))
+                .andExpect(jsonPath("$.meals").exists())
+                .andExpect(jsonPath("$.meals").isArray())
+                .andExpect(jsonPath("$.meals").isNotEmpty())
+                .andExpect(jsonPath("$.meals.length()").value(2));
+                //.andExpect(jsonPath("$.meals").value(expectedValue));
     }
 }
