@@ -15,8 +15,8 @@ import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.SecurityUtil;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -85,12 +85,8 @@ class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getBetween() throws Exception {
-        List<MealTo> allMealTos = MealsUtil.filterByPredicate(meals,
-                SecurityUtil.authUserCaloriesPerDay(), meal -> true);
-        LocalDateTime startDateTime = LocalDateTime.of(2020, 1, 31, 0, 0);
-        LocalDateTime endDateTime = LocalDateTime.of(2020, 1, 31, 14, 0);
-        List<MealTo> expectedValue = allMealTos.stream().filter(m -> m.getDateTime().equals(startDateTime) ||
-                m.getDateTime().isAfter(startDateTime) && m.getDateTime().isBefore(endDateTime)).toList();
+        List<MealTo> expectedMeals = Stream.of(meal6, meal5, meal4).map(meal -> new MealTo(meal.getId(),
+                meal.getDateTime(), meal.getDescription(), meal.getCalories(), true)).toList();
         perform(MockMvcRequestBuilders.get(REST_URL + "filter")
                 .param("startDate", "2020-01-31")
                 .param("startTime", "00:00:00")
@@ -99,13 +95,12 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MEAL_TO_MATCHER.contentJson(expectedValue));
+                .andExpect(MEAL_TO_MATCHER.contentJson(expectedMeals));
     }
 
     @Test
     void getBetweenWithEmptyParams() throws Exception {
-        List<MealTo> expectedValue = MealsUtil.filterByPredicate(meals,
-                SecurityUtil.authUserCaloriesPerDay(), meal -> true);
+        List<MealTo> expectedValue = MealsUtil.getTos(meals, SecurityUtil.authUserCaloriesPerDay());
         perform(MockMvcRequestBuilders.get(REST_URL + "filter")
                 .param("startDate", "")
                 .param("endTime", ""))
