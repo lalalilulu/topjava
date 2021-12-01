@@ -85,8 +85,9 @@ class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getBetween() throws Exception {
-        List<MealTo> expectedMeals = Stream.of(meal6, meal5, meal4).map(meal -> new MealTo(meal.getId(),
-                meal.getDateTime(), meal.getDescription(), meal.getCalories(), true)).toList();
+        List<MealTo> expectedMeals = Stream.of(meal6, meal5, meal4)
+                .map(meal -> MealsUtil.createTo(meal, true))
+                .toList();
         perform(MockMvcRequestBuilders.get(REST_URL + "filter")
                 .param("startDate", "2020-01-31")
                 .param("startTime", "00:00:00")

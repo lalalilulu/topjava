@@ -13,12 +13,10 @@ import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
-import java.util.Arrays;
-import java.util.List;
-
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static ru.javawebinar.topjava.MealTestData.*;
+import static ru.javawebinar.topjava.MealTestData.MEAL_MATCHER;
+import static ru.javawebinar.topjava.MealTestData.meals;
 import static ru.javawebinar.topjava.Profiles.DATAJPA;
 import static ru.javawebinar.topjava.UserTestData.*;
 
@@ -60,16 +58,15 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getWithMeals() throws Exception {
-        Assumptions.assumeTrue(Arrays.asList(env.getActiveProfiles()).contains(DATAJPA));
+        Assumptions.assumeTrue(checkProfile(env, DATAJPA));
         ResultActions action = perform(MockMvcRequestBuilders.get(REST_URL + "with-meals"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(USER_MATCHER.contentJson(user))
                 .andExpect(jsonPath("$.meals").exists())
                 .andExpect(jsonPath("$.meals").isArray())
                 .andExpect(jsonPath("$.meals.length()").value(7));
         User receivedUser = USER_MATCHER.readFromJson(action);
-        MEAL_MATCHER.assertMatch(receivedUser.getMeals(),
-                List.of(meal7, meal6, meal5, meal4, meal3, meal2, meal1));
+        USER_MATCHER.assertMatch(receivedUser, user);
+        MEAL_MATCHER.assertMatch(receivedUser.getMeals(), meals);
     }
 }

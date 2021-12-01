@@ -14,7 +14,6 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -96,15 +95,15 @@ class AdminRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getWithMeals() throws Exception {
-        Assumptions.assumeTrue(Arrays.asList(env.getActiveProfiles()).contains(DATAJPA));
+        Assumptions.assumeTrue(checkProfile(env, DATAJPA));
         ResultActions action = perform(MockMvcRequestBuilders.get(REST_URL + ADMIN_ID + "/with-meals"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(USER_MATCHER.contentJson(admin))
                 .andExpect(jsonPath("$.meals").exists())
                 .andExpect(jsonPath("$.meals").isArray())
                 .andExpect(jsonPath("$.meals.length()").value(2));
-        User admin = USER_MATCHER.readFromJson(action);
-        MEAL_MATCHER.assertMatch(admin.getMeals(), List.of(adminMeal2, adminMeal1));
+        User receivedUser = USER_MATCHER.readFromJson(action);
+        USER_MATCHER.assertMatch(receivedUser, admin);
+        MEAL_MATCHER.assertMatch(receivedUser.getMeals(), List.of(adminMeal2, adminMeal1));
     }
 }
