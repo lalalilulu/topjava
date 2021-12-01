@@ -3,7 +3,7 @@ package ru.javawebinar.topjava.web.user;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -18,7 +18,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.Profiles.DATAJPA;
 import static ru.javawebinar.topjava.UserTestData.*;
@@ -28,7 +29,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
     private static final String REST_URL = AdminRestController.REST_URL + '/';
 
     @Autowired
-    private ConfigurableEnvironment env;
+    private Environment env;
 
     @Autowired
     private UserService userService;
@@ -95,13 +96,10 @@ class AdminRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getWithMeals() throws Exception {
-        Assumptions.assumeTrue(checkProfile(env, DATAJPA));
+        Assumptions.assumeTrue(isActiveProfile(env, DATAJPA));
         ResultActions action = perform(MockMvcRequestBuilders.get(REST_URL + ADMIN_ID + "/with-meals"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.meals").exists())
-                .andExpect(jsonPath("$.meals").isArray())
-                .andExpect(jsonPath("$.meals.length()").value(2));
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
         User receivedUser = USER_MATCHER.readFromJson(action);
         USER_MATCHER.assertMatch(receivedUser, admin);
         MEAL_MATCHER.assertMatch(receivedUser.getMeals(), List.of(adminMeal2, adminMeal1));
