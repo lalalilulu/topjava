@@ -14,7 +14,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/meals", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/ui/meals", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MealUIController extends AbstractMealController {
 
     @Override
@@ -45,6 +45,5 @@ public class MealUIController extends AbstractMealController {
             @RequestParam @Nullable LocalTime startTime,
             @RequestParam @Nullable LocalTime endTime) {
         return super.getBetween(startDate, startTime, endDate, endTime);
-
     }
 }
