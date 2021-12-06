@@ -12,6 +12,40 @@
 <div class="jumbotron pt-4">
     <div class="container">
         <h3><spring:message code="meal.title"/></h3>
+        <hr>
+        <form id="filterForm">
+            <div class="form-group col-6">
+                <label for="startDate" class="col-form-label"><spring:message code="meal.startDate"/>:</label>
+                <input type="date" class="form-control" id="startDate" name="startDate" value="${param.startDate}">
+            </div>
+
+            <div class="form-group col-6">
+                <label for="endDate" class="col-form-label"><spring:message code="meal.endDate"/>:</label>
+                <input type="date" class="form-control" id="endDate" name="endDate" value="${param.endDate}">
+            </div>
+
+            <div class="form-group col-6">
+                <label for="startTime" class="col-form-label"><spring:message code="meal.startTime"/>:</label>
+                <input type="time" class="form-control" id="startTime" name="startTime" value="${param.startTime}">
+            </div>
+
+            <div class="form-group col-6">
+                <label for="endTime" class="col-form-label"><spring:message code="meal.endTime"/>:</label>
+                <input type="time" class="form-control" id="endTime" name="endTime" value="${param.endTime}">
+            </div>
+        </form>
+        <div class="col-6">
+            <button type="button" class="btn btn-primary" onclick="filter()">
+                <span class="fa fa-filter"></span>
+                <spring:message code="meal.filter"/>
+            </button>
+            <button type="button" class="btn btn-primary" onclick="clearFilter()">
+                <span class="fa fa-remove"></span>
+                <spring:message code="meal.clear"/>
+            </button>
+        </div>
+        <hr>
+
         <button class="btn btn-primary" onclick="add()">
             <span class="fa fa-plus"></span>
             <spring:message code="meal.add"/>

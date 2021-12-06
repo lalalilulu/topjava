@@ -37,3 +37,22 @@ $(function () {
         })
     );
 });
+
+const filterForm = $('#filterForm');
+
+function filter() {
+    $.ajax({
+        url: ctx.ajaxUrl + "filter",
+        type: "GET",
+        data: filterForm.serialize()
+    }).done(function (data) {
+        ctx.datatableApi.clear().rows.add(data).draw();
+        successNoty("Filtered");
+    });
+}
+
+function clearFilter() {
+    filterForm.find(":input").val("");
+    updateTable();
+    successNoty("Filter is cleared");
+}
