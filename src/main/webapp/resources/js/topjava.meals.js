@@ -46,13 +46,12 @@ function filter() {
         type: "GET",
         data: filterForm.serialize()
     }).done(function (data) {
-        ctx.datatableApi.clear().rows.add(data).draw();
-        successNoty("Filtered");
+        populateTable(data);
     });
 }
 
 function clearFilter() {
-    filterForm.find(":input").val("");
+    //https://stackoverflow.com/questions/16452699/how-to-reset-a-form-using-jquery-with-reset-method
+    filterForm.trigger('reset');
     updateTable();
-    successNoty("Filter form is cleared");
 }

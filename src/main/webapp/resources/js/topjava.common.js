@@ -18,7 +18,7 @@ function makeEditable(datatableApi) {
 }
 
 function add() {
-    form.find(":input").val("");
+    form.trigger('reset');
     $("#editRow").modal();
 }
 
@@ -34,8 +34,12 @@ function deleteRow(id) {
 
 function updateTable() {
     $.get(ctx.ajaxUrl, function (data) {
-        ctx.datatableApi.clear().rows.add(data).draw();
+        populateTable(data)
     });
+}
+
+function populateTable(data) {
+    ctx.datatableApi.clear().rows.add(data).draw();
 }
 
 function save() {

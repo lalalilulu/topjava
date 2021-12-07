@@ -16,22 +16,22 @@
         <form id="filterForm" class="col-4 p-0">
             <div class="form-group">
                 <label for="startDate" class="col-form-label"><spring:message code="meal.startDate"/>:</label>
-                <input type="date" class="form-control" id="startDate" name="startDate" value="${param.startDate}">
+                <input type="date" class="form-control" id="startDate" name="startDate" value="${startDate}">
             </div>
 
             <div class="form-group">
                 <label for="endDate" class="col-form-label"><spring:message code="meal.endDate"/>:</label>
-                <input type="date" class="form-control" id="endDate" name="endDate" value="${param.endDate}">
+                <input type="date" class="form-control" id="endDate" name="endDate" value="${endDate}">
             </div>
 
             <div class="form-group">
                 <label for="startTime" class="col-form-label"><spring:message code="meal.startTime"/>:</label>
-                <input type="time" class="form-control" id="startTime" name="startTime" value="${param.startTime}">
+                <input type="time" class="form-control" id="startTime" name="startTime" value="${startTime}">
             </div>
 
             <div class="form-group">
                 <label for="endTime" class="col-form-label"><spring:message code="meal.endTime"/>:</label>
-                <input type="time" class="form-control" id="endTime" name="endTime" value="${param.endTime}">
+                <input type="time" class="form-control" id="endTime" name="endTime" value="${endTime}">
             </div>
         </form>
         <div class="col-4 p-0">

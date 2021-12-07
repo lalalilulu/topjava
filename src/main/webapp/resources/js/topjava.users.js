@@ -46,15 +46,19 @@ $(function () {
     );
 });
 
-function changeEnabled() {
-    const checkbox = $("#enabledCheckbox");
-    const enabled = checkbox.prop('checked');
+$(function () {
+    $(".checkbox").change(function () {
+        changeEnabled($(this).closest('tr'), $(this).prop('checked'));
+    });
+});
+
+function changeEnabled(row, enabled) {
     $.ajax({
-        url: ctx.ajaxUrl + checkbox.closest('tr').attr("id"),
+        url: ctx.ajaxUrl + row.attr("id"),
         type: "POST",
         data: "enabled=" + enabled
     }).done(function () {
-        updateTable();
-        successNoty("User is " + enabled ? "enabled" : "disabled");
+        row.toggleClass('disabled');
+        successNoty(row.children()[0].textContent + " is " + (enabled ? "enabled" : "disabled"));
     });
 }
