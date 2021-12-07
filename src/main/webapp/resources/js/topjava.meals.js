@@ -54,5 +54,5 @@ function filter() {
 function clearFilter() {
     filterForm.find(":input").val("");
     updateTable();
-    successNoty("Filter is cleared");
+    successNoty("Filter form is cleared");
 }
