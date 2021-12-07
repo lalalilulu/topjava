@@ -45,3 +45,16 @@ $(function () {
         })
     );
 });
+
+function changeEnabled() {
+    const checkbox = $("#enabledCheckbox");
+    const enabled = checkbox.prop('checked');
+    $.ajax({
+        url: ctx.ajaxUrl + checkbox.closest('tr').attr("id"),
+        type: "POST",
+        data: "enabled=" + enabled
+    }).done(function () {
+        updateTable();
+        successNoty("User is " + enabled ? "enabled" : "disabled");
+    });
+}
