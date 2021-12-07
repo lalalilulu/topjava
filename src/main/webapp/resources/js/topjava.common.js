@@ -27,7 +27,7 @@ function deleteRow(id) {
         url: ctx.ajaxUrl + id,
         type: "DELETE"
     }).done(function () {
-        updateTable();
+        typeof filterForm !== 'undefined' ? filter() : updateTable();
         successNoty("Deleted");
     });
 }
@@ -49,7 +49,7 @@ function save() {
         data: form.serialize()
     }).done(function () {
         $("#editRow").modal("hide");
-        updateTable();
+        typeof filterForm !== 'undefined' ? filter() : updateTable();
         successNoty("Saved");
     });
 }
