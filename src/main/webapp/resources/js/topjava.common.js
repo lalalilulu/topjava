@@ -18,7 +18,7 @@ function makeEditable(datatableApi) {
 }
 
 function add() {
-    form.trigger('reset');
+    form.find(":input").val("");
     $("#editRow").modal();
 }
 
@@ -27,7 +27,7 @@ function deleteRow(id) {
         url: ctx.ajaxUrl + id,
         type: "DELETE"
     }).done(function () {
-        typeof filterForm !== 'undefined' ? filter() : updateTable();
+        updateTable();
         successNoty("Deleted");
     });
 }
@@ -49,7 +49,7 @@ function save() {
         data: form.serialize()
     }).done(function () {
         $("#editRow").modal("hide");
-        typeof filterForm !== 'undefined' ? filter() : updateTable();
+        updateTable();
         successNoty("Saved");
     });
 }

@@ -60,5 +60,7 @@ function changeEnabled(row, enabled) {
     }).done(function () {
         row.toggleClass('disabled');
         successNoty(row.children()[0].textContent + " is " + (enabled ? "enabled" : "disabled"));
+    }).fail(function () {
+        row.find('input[type=checkbox]').prop('checked', !enabled);
     });
 }

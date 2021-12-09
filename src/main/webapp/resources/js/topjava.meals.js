@@ -38,6 +38,11 @@ $(function () {
     );
 });
 
+function saveMeal() {
+    save();
+    filter();
+}
+
 const filterForm = $('#filterForm');
 
 function filter() {
@@ -45,9 +50,7 @@ function filter() {
         url: ctx.ajaxUrl + "filter",
         type: "GET",
         data: filterForm.serialize()
-    }).done(function (data) {
-        populateTable(data);
-    });
+    }).done(data => populateTable(data));
 }
 
 function clearFilter() {

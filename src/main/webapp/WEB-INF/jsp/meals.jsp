@@ -16,22 +16,22 @@
         <form id="filterForm" class="col-4 p-0">
             <div class="form-group">
                 <label for="startDate" class="col-form-label"><spring:message code="meal.startDate"/>:</label>
-                <input type="date" class="form-control" id="startDate" name="startDate" value="${startDate}">
+                <input type="date" class="form-control" id="startDate" name="startDate">
             </div>
 
             <div class="form-group">
                 <label for="endDate" class="col-form-label"><spring:message code="meal.endDate"/>:</label>
-                <input type="date" class="form-control" id="endDate" name="endDate" value="${endDate}">
+                <input type="date" class="form-control" id="endDate" name="endDate">
             </div>
 
             <div class="form-group">
                 <label for="startTime" class="col-form-label"><spring:message code="meal.startTime"/>:</label>
-                <input type="time" class="form-control" id="startTime" name="startTime" value="${startTime}">
+                <input type="time" class="form-control" id="startTime" name="startTime">
             </div>
 
             <div class="form-group">
                 <label for="endTime" class="col-form-label"><spring:message code="meal.endTime"/>:</label>
-                <input type="time" class="form-control" id="endTime" name="endTime" value="${endTime}">
+                <input type="time" class="form-control" id="endTime" name="endTime">
             </div>
         </form>
         <div class="col-4 p-0">
@@ -110,7 +110,7 @@
                     <span class="fa fa-close"></span>
                     <spring:message code="common.cancel"/>
                 </button>
-                <button type="button" class="btn btn-primary" onclick="save()">
+                <button type="button" class="btn btn-primary" onclick="saveMeal()">
                     <span class="fa fa-check"></span>
                     <spring:message code="common.save"/>
                 </button>
