@@ -1,15 +1,27 @@
 package ru.javawebinar.topjava.to;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.beans.ConstructorProperties;
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class MealTo extends BaseTo {
+public class MealTo extends BaseTo implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final LocalDateTime dateTime;
 
+    @NotBlank
+    @Size(min = 2, max = 120, message = "length must be between 2 and 120 characters")
     private final String description;
 
+    @Min(value = 10, message = "The value must be positive, min value is 10")
+    @Max(value = 10000, message = "Max value is 10000")
     private final int calories;
 
     private final boolean excess;
