@@ -26,12 +26,6 @@ public class MealUIController extends AbstractMealController {
     }
 
     @Override
-    @GetMapping("/{id}")
-    public Meal get(@PathVariable int id) {
-        return super.get(id);
-    }
-
-    @Override
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
@@ -39,7 +33,6 @@ public class MealUIController extends AbstractMealController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<String> createOrUpdate(@Valid Meal meal, BindingResult result) {
         if (result.hasErrors()) {
             String errorFieldsMsg = result.getFieldErrors().stream()
