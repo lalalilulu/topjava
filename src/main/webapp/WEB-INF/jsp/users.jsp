@@ -78,8 +78,7 @@
 </div>
 <jsp:include page="fragments/footer.jsp"/>
 <jsp:include page="fragments/i18n.jsp">
-    <jsp:param name="customAddTitle" value="user.add"/>
-    <jsp:param name="customEditTitle" value="user.edit"/>
+    <jsp:param name="pageName" value="user"/>
 </jsp:include>
 </body>
 </html>
